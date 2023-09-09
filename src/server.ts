@@ -6,9 +6,9 @@ const app = fastify()
 
 // GET, POST, PUT, PATCH, DELETE
 
-// http://localhost:333/hello
-
-app.register(transactionsRoutes)
+app.register(transactionsRoutes, {
+  prefix: 'transactions',
+})
 
 app
   .listen({
