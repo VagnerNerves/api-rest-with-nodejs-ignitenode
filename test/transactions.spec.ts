@@ -50,4 +50,35 @@ describe('Transactions routes', () => {
       }),
     ])
   })
+
+  it('should be able to get a specific transaction', async () => {
+    const createTransactionReponse = await request(app.server)
+      .post('/transactions')
+      .send({
+        title: 'New transaction',
+        amount: 5000,
+        type: 'credit',
+      })
+
+    const cookies = createTransactionReponse.get('Set-Cookie')
+
+    const listTransactionsReponse = await request(app.server)
+      .get('/transactions')
+      .set('Cookie', cookies)
+      .expect(200)
+
+    const transactionId = listTransactionsReponse.body.transactions[0].id
+
+    const getTransactionReponse = await request(app.server)
+      .get(`/transactions/${transactionId}`)
+      .set('Cookie', cookies)
+      .expect(200)
+
+    expect(getTransactionReponse.body.transaction).toEqual(
+      expect.objectContaining({
+        title: 'New transaction',
+        amount: 5000,
+      }),
+    )
+  })
 })
